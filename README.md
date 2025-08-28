@@ -1,1 +1,10 @@
-HotA.dat parser/writer written in Java. Tested with 1.7.2.
+# HotA.dat Parser
+
+This project is a **HotA.dat parser written in Java**.  
+
+This project was inspired by [sake12/HotA-editor](https://github.com/sake12/HotA-editor).
+
+
+## License
+
+[GNU GPL 3.0](LICENSE)
