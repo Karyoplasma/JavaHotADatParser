@@ -2,7 +2,5 @@
 *.prefs
 bin
 *.class
-miglayout15-swing.jar
-miglayout-src.zip
 res/hota.dat
 res/output.dat
