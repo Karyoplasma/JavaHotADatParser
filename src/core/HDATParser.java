@@ -232,10 +232,10 @@ public class HDATParser {
 
 	public static void main(String[] args) {
 		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
-		List<HDATEntry> entries = parser.parseHDAT();
+//		List<HDATEntry> entries = parser.parseHDAT();
 		// HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
 		// parser.writeHDAT(entries);
-		HDATCreator.reconstructFromFolder(Paths.get("res/export/FileList.txt"), parser.charset);
+		HDATBuilder.reconstructFromFolder(Paths.get("res/export/FileList.txt"), parser.charset);
 	}
 
 }
