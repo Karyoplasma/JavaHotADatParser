@@ -11,7 +11,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HDATParser {
 	private Path hdatPath;
@@ -27,6 +29,11 @@ public class HDATParser {
 		this.scratchBuffer = ByteBuffer.allocate(1024);
 	}
 
+	/**
+	 * Parses the HotA.dat into an ArrayList of HDATEntries.
+	 * @return
+	 * The parsed list of HDATEntries found in the HotA.dat
+	 */
 	public List<HDATEntry> parseHDAT() {
 		List<HDATEntry> ret = new ArrayList<HDATEntry>();
 		try (FileChannel channel = FileChannel.open(this.hdatPath, StandardOpenOption.READ)) {
@@ -134,8 +141,13 @@ public class HDATParser {
 		return this.boolBuffer.get() != 0;
 	}
 
+	/**
+	 * Writes a HotA.dat from a list of entries.
+	 * @param entries
+	 * The HDATEntries found in the HotA.dat file
+	 */
 	public void writeHDAT(List<HDATEntry> entries) {
-		try (RandomAccessFile raf = new RandomAccessFile("res/output.dat", "rw");
+		try (RandomAccessFile raf = new RandomAccessFile(this.hdatPath.getParent().resolve("output.dat").toString(), "rw");
 				FileChannel channel = raf.getChannel()) {
 			byte[] header = "HDAT".getBytes(this.charset);
 			ByteBuffer headerBuffer = ByteBuffer.wrap(header);
@@ -232,10 +244,16 @@ public class HDATParser {
 
 	public static void main(String[] args) {
 		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
-//		List<HDATEntry> entries = parser.parseHDAT();
-		// HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
-		// parser.writeHDAT(entries);
-		HDATBuilder.reconstructFromFolder(Paths.get("res/export/FileList.txt"), parser.charset);
+		Set<String> modList = new HashSet<String>();
+		modList.add("crbank30");
+		modList.add("crbank26");
+		modList.add("crbank31");
+		List<HDATEntry> entries = parser.parseHDAT();
+		HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
+		HDATBuilder.reconstructFromFolder(parser.hdatPath.getParent().resolve("export/FileList.txt"), parser.charset);
+		//parser.writeHDAT(entries);
+//		HDATExporter.exportSpecificFiles(parser.hdatPath, parser.charset, entries, modList);
+//		HDATBuilder.reconstructFromModList(Paths.get("res/export/ModList.txt"), parser.charset, entries);
 	}
 
 }
