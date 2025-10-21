@@ -187,11 +187,8 @@ public class HDATBuilder {
 		}
 
 		List<HDATEntry> entries = readEntriesFromFileList(path, fileList, charset);
-		if (!(entries == null)) {
-			HDATParser parser = new HDATParser(path, charset);
-			parser.writeHDAT(entries);
-		}
-
+		HDATParser parser = new HDATParser(path, charset);
+		parser.writeHDAT(entries);
 	}
 
 	/**
