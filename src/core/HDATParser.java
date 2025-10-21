@@ -214,26 +214,28 @@ public class HDATParser {
 		this.intBuffer.flip();
 		channel.write(intBuffer);
 	}
-	
+
 	private void writeString(FileChannel channel, String string) throws IOException {
-	    byte[] bytes = string.getBytes(charset);
-	    
-	    writeInt32(channel, bytes.length);
+		byte[] bytes = string.getBytes(charset);
 
-	    if (scratchBuffer.capacity() < bytes.length) {
-	        scratchBuffer = ByteBuffer.allocate(bytes.length);
-	    }
+		writeInt32(channel, bytes.length);
 
-	    scratchBuffer.clear();
-	    scratchBuffer.put(bytes);
-	    scratchBuffer.flip();
-	    channel.write(scratchBuffer);
+		if (scratchBuffer.capacity() < bytes.length) {
+			scratchBuffer = ByteBuffer.allocate(bytes.length);
+		}
+
+		scratchBuffer.clear();
+		scratchBuffer.put(bytes);
+		scratchBuffer.flip();
+		channel.write(scratchBuffer);
 	}
 
 	public static void main(String[] args) {
 		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
 		List<HDATEntry> entries = parser.parseHDAT();
-		System.out.println("Entries: " + entries.size());
-		parser.writeHDAT(entries);
+		// HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
+		// parser.writeHDAT(entries);
+		HDATCreator.reconstructFromFolder(Paths.get("res/export/FileList.txt"), parser.charset);
 	}
+
 }

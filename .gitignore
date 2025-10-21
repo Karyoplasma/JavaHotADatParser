@@ -1,6 +1,6 @@
-.settings
+/.settings/
 *.prefs
-bin
+/bin/
 *.class
-res/hota.dat
-res/output.dat
+/res/
+/export/
