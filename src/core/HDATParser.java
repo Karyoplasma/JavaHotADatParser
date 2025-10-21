@@ -242,73 +242,75 @@ public class HDATParser {
 		channel.write(scratchBuffer);
 	}
 
-	
+//	public static void main(String[] args) {
+//		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
+//		List<HDATEntry> entries = parser.parseHDAT();
+//		Set<String> exportList = new HashSet<String>();
+//		exportList.add("crbank30");
+//		exportList.add("crbank26");
+//		exportList.add("crbank31");
+//		HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
+//		HDATBuilder.reconstructFromFolder(parser.hdatPath.getParent().resolve("export/FileList.txt"), parser.charset);
+////		HDATExporter.exportSpecificFiles(parser.hdatPath, parser.charset, entries, exportList);
+////		HDATBuilder.reconstructFromModList(Paths.get("res/export/ModList.txt"), parser.charset, entries);
+//	}
+
 	public static void main(String[] args) {
 		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
 		List<HDATEntry> entries;
 		Set<String> exportList;
-		
+
 		if (args.length < 1) {
-            System.err.println("Usage: java -jar HDATParser.jar <option> [values]");
-            System.exit(1);
-        }
+			System.err.println("Usage: java -jar HDATParser.jar <option> [values]");
+			System.exit(1);
+		}
 
-        String option = args[0];
+		String option = args[0];
 
-        switch (option) {
-            case "-E":
-                System.out.println("Exporting all files from HotA.dat: ");
-                entries = parser.parseHDAT();
-        		HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
-                break;
+		switch (option) {
+		case "-E":
+			System.out.println("Exporting all files from HotA.dat: ");
+			entries = parser.parseHDAT();
+			HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
+			break;
 
-            case "-e":
-                if (args.length < 2) {
-                    System.err.println("-e requires a list of strings");
-                    System.exit(1);
-                }
-                exportList = new HashSet<String>();
-                for (String file : args[1].split(",")) {
-                	exportList.add(file.trim());
-                }
-                System.out.println("Exporting selected files from HotA.dat: " + args[1]);
-                entries = parser.parseHDAT();
-                HDATExporter.exportSpecificFiles(parser.hdatPath, parser.charset, entries, exportList);
-                break;
+		case "-e":
+			if (args.length < 2) {
+				System.err.println("-e requires a list of strings");
+				System.exit(1);
+			}
+			exportList = new HashSet<String>();
+			for (String file : args[1].split(",")) {
+				exportList.add(file.trim());
+			}
+			System.out.println("Exporting selected files from HotA.dat: " + args[1]);
+			entries = parser.parseHDAT();
+			HDATExporter.exportSpecificFiles(parser.hdatPath, parser.charset, entries, exportList);
+			break;
 
-            case "-W":
-                System.out.println("Rebuilding HotA.dat from FileList.txt.");
-                HDATBuilder.reconstructFromFolder(parser.hdatPath.getParent().resolve("export/FileList.txt"), parser.charset);
-                break;
-            case "-m":
-            case "-w":
-                if (args.length < 2) {
-                    System.err.println("-w requires a list of strings");
-                    System.exit(1);
-                }
-                exportList = new HashSet<String>();
-                for (String file : args[1].split(",")) {
-                	exportList.add(file.trim());
-                }
-                System.out.println("Merging original HotA.dat with files from the ModList.txt.");
-                entries = parser.parseHDAT();             
-                HDATBuilder.reconstructFromModList(Paths.get("res/export/ModList.txt"), parser.charset, entries);
-                break;
+		case "-W":
+			System.out.println("Rebuilding HotA.dat from FileList.txt.");
+			HDATBuilder.reconstructFromFolder(parser.hdatPath.getParent().resolve("export/FileList.txt"),
+					parser.charset);
+			break;
+		case "-m":
+		case "-w":
+			if (args.length < 2) {
+				System.err.println("-w requires a list of strings");
+				System.exit(1);
+			}
+			exportList = new HashSet<String>();
+			for (String file : args[1].split(",")) {
+				exportList.add(file.trim());
+			}
+			System.out.println("Merging original HotA.dat with files from the ModList.txt.");
+			entries = parser.parseHDAT();
+			HDATBuilder.reconstructFromModList(Paths.get("res/export/ModList.txt"), parser.charset, entries);
+			break;
 
-            default:
-                System.err.println("Unknown option: " + option);
-                System.exit(1);
-        }
-//		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
-//		Set<String> modList = new HashSet<String>();
-//		modList.add("crbank30");
-//		modList.add("crbank26");
-//		modList.add("crbank31");
-		
-		//
-		// parser.writeHDAT(entries);
-		
-		
+		default:
+			System.err.println("Unknown option: " + option);
+			System.exit(1);
+		}
 	}
-
 }
