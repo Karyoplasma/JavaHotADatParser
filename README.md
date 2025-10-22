@@ -2,7 +2,7 @@
 
 This project is a HotA.dat parser written in Java. It can export the entries into separate, editable files and merge them together when creating a new .dat file.
 
-##Usage
+## Usage
 
 **This program requires Java 8 or newer.**
 
