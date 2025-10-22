@@ -40,7 +40,7 @@ public class HDATExporter {
 				return;
 			}
 		}
-		for (HDATEntry entry : entries) {	
+		for (HDATEntry entry : entries) {
 			try (PrintWriter writer = new PrintWriter(exportPath.resolve(entry.name).toFile(), charset.toString())) {
 				writer.println(entry.toExportString());
 			} catch (FileNotFoundException e) {

@@ -253,7 +253,7 @@ public class HDATEntry {
 				}
 
 			}
-		} 
+		}
 
 		if (temp.name == null)
 			temp.name = "";
@@ -278,11 +278,12 @@ public class HDATEntry {
 
 		return temp;
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.name;
 	}
+
 	public String toExportString() {
 		String newLine = System.getProperty("line.separator");
 		StringBuilder builder = new StringBuilder();

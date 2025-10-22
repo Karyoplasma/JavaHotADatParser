@@ -167,6 +167,7 @@ public class HDATParserGui {
 			File selected = chooser.getSelectedFile();
 			if (!selected.getName().equalsIgnoreCase("hota.dat")) {
 				JOptionPane.showMessageDialog(frmHotadatParserGui, "Please select the HotA.dat file.");
+				return;
 			}
 			this.hotaDatPath = selected.toPath();
 			this.lblPath.setText(this.hotaDatPath.toString());
@@ -183,7 +184,7 @@ public class HDATParserGui {
 	}
 
 	private Charset getCharset() {
-		return (this.rdbtnCharset1251.isSelected()) ? WINDOWS1251 : WINDOWS1250;
+		return (this.rdbtnCharset1250.isSelected()) ? WINDOWS1250 : WINDOWS1251;
 	}
 
 	private void initList() {
@@ -208,12 +209,11 @@ public class HDATParserGui {
 						return;
 					}
 					listModel.setElementAt(lastSelectedIndex, temp);
-					listModel.elementUpdated(lastSelectedIndex);
 				}
 				int newIndex = listEntryList.getSelectedIndex();
 				if (newIndex != -1) {
 					HDATEntry current = listModel.getElementAt(newIndex);
-					textAreaEditor.setText(current.toExportString());
+					this.setText(current.toExportString());
 					lastSelectedIndex = newIndex;
 				} else {
 					textAreaEditor.setText("");
@@ -221,22 +221,10 @@ public class HDATParserGui {
 				}
 			}
 		});
-//		listEntryList.setCellRenderer(new DefaultListCellRenderer() {
-//			private static final long serialVersionUID = -7632478126020599041L;
-//
-//			@Override
-//			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-//					boolean cellHasFocus) {
-//				JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
-//						cellHasFocus);
-//				if (value instanceof HDATEntry) {
-//					label.setText(((HDATEntry) value).getName());
-//				} else {
-//					label.setText(value.toString());
-//				}
-//
-//				return label;
-//			}
-//		});
+	}
+
+	private void setText(String text) {
+		this.textAreaEditor.setText(text.replace("\r\n", "\n"));
+		this.textAreaEditor.setCaretPosition(0);
 	}
 }

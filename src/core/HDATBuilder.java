@@ -29,7 +29,7 @@ public class HDATBuilder {
 		}
 
 	}
-	
+
 	private static List<HDATEntry> readEntriesFromFileList(Path path, List<String> fileList, Charset charset) {
 		List<HDATEntry> entries = new ArrayList<HDATEntry>();
 		for (String file : fileList) {
@@ -97,7 +97,8 @@ public class HDATBuilder {
 			e.printStackTrace();
 			return;
 		}
-		List<HDATEntry> entries = mergeEntriesFromModList(modListPath.getParent().resolve("ModFiles"), modList, originals, charset);
+		List<HDATEntry> entries = mergeEntriesFromModList(modListPath.getParent().resolve("ModFiles"), modList,
+				originals, charset);
 		HDATParser parser = new HDATParser(modListPath, charset);
 		parser.writeHDAT(entries);
 

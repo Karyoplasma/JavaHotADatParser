@@ -31,9 +31,4 @@ public class HDATEntryListModel<HDATEntry> extends AbstractListModel<HDATEntry> 
 		entries.set(index, entry);
 		fireContentsChanged(this, index, index);
 	}
-
-	public void elementUpdated(int index) {
-		fireContentsChanged(this, index, index);
-	}
-
 }

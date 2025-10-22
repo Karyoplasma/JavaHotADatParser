@@ -147,6 +147,8 @@ public class HDATParser {
 	 * Writes a HotA.dat from a list of entries.
 	 * 
 	 * @param entries The HDATEntries found in the HotA.dat file
+	 * @return returns true after the file was successfully written, returns false
+	 *         on any Exception encountered
 	 */
 	public boolean writeHDAT(List<HDATEntry> entries) {
 		try (RandomAccessFile raf = new RandomAccessFile(this.hdatPath.getParent().resolve("output.dat").toString(),
@@ -245,20 +247,20 @@ public class HDATParser {
 		scratchBuffer.flip();
 		channel.write(scratchBuffer);
 	}
-	
+
 	public void setCharset(Charset charset) {
 		this.charset = charset;
 	}
-	
+
 	public void setPath(Path path) {
 		this.hdatPath = path;
 	}
-	
+
 	private static void runFromCommandLine(String[] args) {
 		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
 		List<HDATEntry> entries;
 		Set<String> exportList;
-		
+
 		String option = args[0];
 
 		switch (option) {
@@ -325,6 +327,6 @@ public class HDATParser {
 			HDATParserGui.launchGUI();
 		} else {
 			runFromCommandLine(args);
-		}	
+		}
 	}
 }
