@@ -1,12 +1,10 @@
 package gui;
 
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -215,7 +213,7 @@ public class HDATParserGui {
 				int newIndex = listEntryList.getSelectedIndex();
 				if (newIndex != -1) {
 					HDATEntry current = listModel.getElementAt(newIndex);
-					textAreaEditor.setText(current.toString());
+					textAreaEditor.setText(current.toExportString());
 					lastSelectedIndex = newIndex;
 				} else {
 					textAreaEditor.setText("");
@@ -223,22 +221,22 @@ public class HDATParserGui {
 				}
 			}
 		});
-		listEntryList.setCellRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = -7632478126020599041L;
-
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
-						cellHasFocus);
-				if (value instanceof HDATEntry) {
-					label.setText(((HDATEntry) value).getName());
-				} else {
-					label.setText(value.toString());
-				}
-
-				return label;
-			}
-		});
+//		listEntryList.setCellRenderer(new DefaultListCellRenderer() {
+//			private static final long serialVersionUID = -7632478126020599041L;
+//
+//			@Override
+//			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+//					boolean cellHasFocus) {
+//				JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+//						cellHasFocus);
+//				if (value instanceof HDATEntry) {
+//					label.setText(((HDATEntry) value).getName());
+//				} else {
+//					label.setText(value.toString());
+//				}
+//
+//				return label;
+//			}
+//		});
 	}
 }

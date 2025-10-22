@@ -31,19 +31,18 @@ public class HDATExporter {
 		Path exportPath = hdatPath.getParent().resolve("export/FileList.txt");
 		exportFileList(entries, exportPath, charset);
 		exportPath = exportPath.getParent().resolve("Files");
-		for (HDATEntry entry : entries) {
-			if (!exportPath.toFile().exists()) {
-				try {
-					Files.createDirectories(exportPath);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
+		if (!exportPath.toFile().exists()) {
+			try {
+				Files.createDirectories(exportPath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
 			}
-			// entry.exportToFile(exportPath, charset);
+		}
+		for (HDATEntry entry : entries) {	
 			try (PrintWriter writer = new PrintWriter(exportPath.resolve(entry.name).toFile(), charset.toString())) {
-				writer.println(entry.toString());
+				writer.println(entry.toExportString());
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -94,20 +93,20 @@ public class HDATExporter {
 		Path exportPath = hdatPath.getParent().resolve("export/ModList.txt");
 		exportModList(exportPath, charset, modList);
 		exportPath = exportPath.getParent().resolve("ModFiles");
+		if (!exportPath.toFile().exists()) {
+			try {
+				Files.createDirectories(exportPath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+		}
 		for (HDATEntry entry : entries) {
 			if (modList.contains(entry.getName())) {
-				if (!exportPath.toFile().exists()) {
-					try {
-						Files.createDirectories(exportPath);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return;
-					}
-				}
-				try (PrintWriter writer = new PrintWriter(exportPath.resolve(entry.name).toFile(),
+				try (PrintWriter writer = new PrintWriter(exportPath.resolve(entry.getName()).toFile(),
 						charset.toString())) {
-					writer.println(entry.toString());
+					writer.println(entry.toExportString());
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
