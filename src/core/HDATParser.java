@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import gui.HDATParserGui;
+
 public class HDATParser {
 	private Path hdatPath;
 	private Charset charset;
@@ -146,7 +148,7 @@ public class HDATParser {
 	 * 
 	 * @param entries The HDATEntries found in the HotA.dat file
 	 */
-	public void writeHDAT(List<HDATEntry> entries) {
+	public boolean writeHDAT(List<HDATEntry> entries) {
 		try (RandomAccessFile raf = new RandomAccessFile(this.hdatPath.getParent().resolve("output.dat").toString(),
 				"rw"); FileChannel channel = raf.getChannel()) {
 			byte[] header = "HDAT".getBytes(this.charset);
@@ -193,10 +195,12 @@ public class HDATParser {
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
-
+		return true;
 	}
 
 	private void writeExtraInts(FileChannel channel, int[] extraInts) throws IOException {
@@ -241,30 +245,20 @@ public class HDATParser {
 		scratchBuffer.flip();
 		channel.write(scratchBuffer);
 	}
-
-//	public static void main(String[] args) {
-//		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
-//		List<HDATEntry> entries = parser.parseHDAT();
-//		Set<String> exportList = new HashSet<String>();
-//		exportList.add("crbank30");
-//		exportList.add("crbank26");
-//		exportList.add("crbank31");
-//		HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
-//		HDATBuilder.reconstructFromFolder(parser.hdatPath.getParent().resolve("export/FileList.txt"), parser.charset);
-////		HDATExporter.exportSpecificFiles(parser.hdatPath, parser.charset, entries, exportList);
-////		HDATBuilder.reconstructFromModList(Paths.get("res/export/ModList.txt"), parser.charset, entries);
-//	}
-
-	public static void main(String[] args) {
+	
+	public void setCharset(Charset charset) {
+		this.charset = charset;
+	}
+	
+	public void setPath(Path path) {
+		this.hdatPath = path;
+	}
+	
+	private static void runFromCommandLine(String[] args) {
 		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
 		List<HDATEntry> entries;
 		Set<String> exportList;
-
-		if (args.length < 1) {
-			System.err.println("Usage: java -jar HDATParser.jar <option> [values]");
-			System.exit(1);
-		}
-
+		
 		String option = args[0];
 
 		switch (option) {
@@ -312,5 +306,25 @@ public class HDATParser {
 			System.err.println("Unknown option: " + option);
 			System.exit(1);
 		}
+	}
+//	public static void main(String[] args) {
+//		HDATParser parser = new HDATParser(Paths.get("res/HotA.dat"), Charset.forName("windows-1251"));
+//		List<HDATEntry> entries = parser.parseHDAT();
+//		Set<String> exportList = new HashSet<String>();
+//		exportList.add("crbank30");
+//		exportList.add("crbank26");
+//		exportList.add("crbank31");
+//		HDATExporter.exportAllFiles(parser.hdatPath, parser.charset, entries);
+//		HDATBuilder.reconstructFromFolder(parser.hdatPath.getParent().resolve("export/FileList.txt"), parser.charset);
+////		HDATExporter.exportSpecificFiles(parser.hdatPath, parser.charset, entries, exportList);
+////		HDATBuilder.reconstructFromModList(Paths.get("res/export/ModList.txt"), parser.charset, entries);
+//	}
+
+	public static void main(String[] args) {
+		if (args.length < 1) {
+			HDATParserGui.launchGUI();
+		} else {
+			runFromCommandLine(args);
+		}	
 	}
 }
