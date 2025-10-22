@@ -291,14 +291,14 @@ public class HDATParser {
 			break;
 		case "-m":
 		case "-w":
-			if (args.length < 2) {
-				System.err.println("-w requires a list of strings");
-				System.exit(1);
-			}
-			exportList = new HashSet<String>();
-			for (String file : args[1].split(",")) {
-				exportList.add(file.trim());
-			}
+//			if (args.length < 2) {
+//				System.err.println("-w requires a list of strings");
+//				System.exit(1);
+//			}
+//			exportList = new HashSet<String>();
+//			for (String file : args[1].split(",")) {
+//				exportList.add(file.trim());
+//			}
 			System.out.println("Merging original HotA.dat with files from the ModList.txt.");
 			entries = parser.parseHDAT();
 			HDATBuilder.reconstructFromModList(Paths.get("res/export/ModList.txt"), parser.charset, entries);

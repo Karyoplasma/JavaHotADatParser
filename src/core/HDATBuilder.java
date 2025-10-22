@@ -21,7 +21,8 @@ public class HDATBuilder {
 	private static HDATEntry readEntryFromFile(Path filePath, Charset charset) {
 
 		try {
-			String content = Files.readString(filePath, charset);
+			//String content = Files.readString(filePath, charset);
+			String content = new String(Files.readAllBytes(filePath), charset);
 			return HDATEntry.fromText(content);
 		} catch (IOException e) {
 			e.printStackTrace();

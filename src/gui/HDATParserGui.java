@@ -73,9 +73,9 @@ public class HDATParserGui {
 	private void initialize() {
 		frmHotadatParserGui = new JFrame();
 		frmHotadatParserGui.setTitle("HotA.dat Parser GUI");
-		frmHotadatParserGui.setBounds(100, 100, 450, 300);
+		frmHotadatParserGui.setBounds(10, 10, 800, 1000);
 		frmHotadatParserGui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmHotadatParserGui.getContentPane().setLayout(new MigLayout("", "[][grow,fill][]", "[][grow][]"));
+		frmHotadatParserGui.getContentPane().setLayout(new MigLayout("", "[150px][500px,grow,fill][]", "[][900px,grow][]"));
 
 		lblPath = new JLabel("");
 		lblPath.setFont(BOLD);
