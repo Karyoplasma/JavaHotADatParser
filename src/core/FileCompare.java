@@ -50,7 +50,7 @@ public class FileCompare {
 
 	public static void main(String[] args) throws IOException {
 		String original = "res/HotA.dat";
-		String written = "res/export/output.dat";
+		String written = "res/output.dat";
 
 		printFirstDifference(new File(original), new File(written));
 		long crcOriginal = computeCRC(original);
