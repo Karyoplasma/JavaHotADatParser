@@ -1,8 +1,8 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import javax.swing.JFileChooser;
@@ -24,6 +24,10 @@ import javax.swing.JTextArea;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.JTextField;
 
 public class HDATParserGui {
 
@@ -31,6 +35,7 @@ public class HDATParserGui {
 	private static final Font PLAIN = new Font("Tahoma", Font.PLAIN, 14);
 	private static final Charset WINDOWS1251 = Charset.forName("windows-1251");
 	private static final Charset WINDOWS1250 = Charset.forName("windows-1250");
+	private static final Color BACKGROUND = new Color(240, 240, 240);
 	private JFrame frmHotadatParserGui;
 	private final JFileChooser chooser = new JFileChooser();
 	private JList<HDATEntry> listEntryList;
@@ -40,9 +45,11 @@ public class HDATParserGui {
 	private JButton btnWriteHotaDat;
 	private JRadioButton rdbtnCharset1251;
 	private JRadioButton rdbtnCharset1250;
-	private HDATEntryListModel<HDATEntry> listModel;
+	private HDATEntryListModel listModel;
 	private int lastSelectedIndex = -1;
 	private HDATParser parser;
+	private JTextField searchField;
+	private boolean changed = false;
 
 	/**
 	 * Launch the application.
@@ -75,11 +82,16 @@ public class HDATParserGui {
 		frmHotadatParserGui.setTitle("HotA.dat Parser GUI");
 		frmHotadatParserGui.setBounds(10, 10, 800, 1000);
 		frmHotadatParserGui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmHotadatParserGui.getContentPane().setLayout(new MigLayout("", "[150px][500px,grow,fill][]", "[][900px,grow][]"));
+		frmHotadatParserGui.getContentPane()
+				.setLayout(new MigLayout("", "[175px][500px,grow,fill][]", "[][900px,grow][]"));
+
+		initSearchField();
+		frmHotadatParserGui.getContentPane().add(searchField, "cell 0 0,grow");
 
 		lblPath = new JLabel("");
+		lblPath.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblPath.setFont(BOLD);
-		frmHotadatParserGui.getContentPane().add(lblPath, "cell 0 0 2 1");
+		frmHotadatParserGui.getContentPane().add(lblPath, "cell 1 0");
 
 		JButton btnOpen = new JButton("Open");
 		btnOpen.setFont(PLAIN);
@@ -91,13 +103,31 @@ public class HDATParserGui {
 		JScrollPane panelList = new JScrollPane();
 		this.initList();
 		panelList.setBorder(BorderFactory.createTitledBorder("File List"));
+		listEntryList.setBackground(BACKGROUND);
 		panelList.setViewportView(listEntryList);
 		frmHotadatParserGui.getContentPane().add(panelList, "cell 0 1,grow");
 
 		JScrollPane panelEditor = new JScrollPane();
 		textAreaEditor = new JTextArea();
 		textAreaEditor.setEnabled(false);
+		textAreaEditor.setBackground(BACKGROUND);
 		textAreaEditor.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		textAreaEditor.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changed = true;
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changed = true;
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				changed = true;
+			}
+		});
 		panelEditor.setBorder(BorderFactory.createTitledBorder("Editor"));
 		panelEditor.setViewportView(textAreaEditor);
 		frmHotadatParserGui.getContentPane().add(panelEditor, "cell 1 1 2 1,grow");
@@ -127,6 +157,39 @@ public class HDATParserGui {
 		chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 	}
 
+	private void initSearchField() {
+		searchField = new JTextField();
+		searchField.setFont(PLAIN);
+		searchField.setEditable(false);
+		searchField.setColumns(10);
+		searchField.getDocument().addDocumentListener(new DocumentListener() {
+
+			private void filter() {
+				listEntryList.clearSelection();
+				listModel.filter(searchField.getText());
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				filter();
+
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				filter();
+
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+
+			}
+
+		});
+
+	}
+
 	private void writeHotaDat() {
 		if (this.parser == null) {
 			JOptionPane.showMessageDialog(frmHotadatParserGui, "Parser is null.", "NullPointerException",
@@ -140,19 +203,14 @@ public class HDATParserGui {
 		}
 		this.parser.setPath(hotaDatPath);
 		this.parser.setCharset(getCharset());
-		HDATEntry temp = null;
-		try {
+		if (changed) {
+			HDATEntry temp = null;
 			temp = HDATEntry.fromText(this.textAreaEditor.getText());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			if (temp != null && lastSelectedIndex >= 0) {
+				((HDATEntryListModel) this.listEntryList.getModel()).saveEntry(lastSelectedIndex, temp);
+			}
 		}
-		if (temp != null) {
-			((HDATEntryListModel<HDATEntry>) this.listEntryList.getModel())
-					.setElementAt(this.listEntryList.getSelectedIndex(), temp);
-		}
-		if (this.parser.writeHDAT(((HDATEntryListModel<HDATEntry>) this.listEntryList.getModel()).getEntries())) {
+		if (this.parser.writeHDAT(((HDATEntryListModel) this.listEntryList.getModel()).getEntries())) {
 			JOptionPane.showMessageDialog(frmHotadatParserGui,
 					"File successfully written to:\n" + this.hotaDatPath.getParent().resolve("output.dat").toString(),
 					"Success!", JOptionPane.INFORMATION_MESSAGE);
@@ -173,13 +231,14 @@ public class HDATParserGui {
 			this.lblPath.setText(this.hotaDatPath.toString());
 			this.textAreaEditor.setEnabled(true);
 			this.btnWriteHotaDat.setEnabled(true);
+			this.searchField.setEditable(true);
 			this.initializeListModel();
 		}
 	}
 
 	private void initializeListModel() {
 		this.parser = new HDATParser(this.hotaDatPath, this.getCharset());
-		this.listModel = new HDATEntryListModel<HDATEntry>(parser.parseHDAT());
+		this.listModel = new HDATEntryListModel(parser.parseHDAT());
 		this.listEntryList.setModel(this.listModel);
 	}
 
@@ -193,22 +252,13 @@ public class HDATParserGui {
 		listEntryList.setFont(PLAIN);
 		listEntryList.addListSelectionListener(e -> {
 			if (!e.getValueIsAdjusting()) {
-				if (lastSelectedIndex != -1) {
-
+				if (lastSelectedIndex != -1 && changed) {
 					HDATEntry temp = null;
-					try {
-						temp = HDATEntry.fromText(textAreaEditor.getText());
-					} catch (NumberFormatException e1) {
-						JOptionPane.showMessageDialog(frmHotadatParserGui, "Error parsing one of the numbers.",
-								"NumberFormatException", JOptionPane.ERROR_MESSAGE);
-					} catch (IOException e1) {
-						JOptionPane.showMessageDialog(frmHotadatParserGui, "Error parsing the editor.", "IOException",
-								JOptionPane.ERROR_MESSAGE);
-					}
+					temp = HDATEntry.fromText(textAreaEditor.getText());
 					if (temp == null) {
 						return;
 					}
-					listModel.setElementAt(lastSelectedIndex, temp);
+					listModel.saveEntry(lastSelectedIndex, temp);
 				}
 				int newIndex = listEntryList.getSelectedIndex();
 				if (newIndex != -1) {
@@ -226,5 +276,6 @@ public class HDATParserGui {
 	private void setText(String text) {
 		this.textAreaEditor.setText(text.replace("\r\n", "\n"));
 		this.textAreaEditor.setCaretPosition(0);
+		this.changed = false;
 	}
 }

@@ -136,7 +136,7 @@ public class HDATEntry {
 		return extraInts;
 	}
 
-	public static HDATEntry fromText(String text) throws NumberFormatException, IOException {
+	public static HDATEntry fromText(String text) {
 		HDATEntry temp = new HDATEntry();
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			String line;
@@ -253,6 +253,12 @@ public class HDATEntry {
 				}
 
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return null;
 		}
 
 		if (temp.name == null)
@@ -358,12 +364,6 @@ public class HDATEntry {
 		if (!(obj instanceof HDATEntry))
 			return false;
 		HDATEntry other = (HDATEntry) obj;
-		return Objects.equals(data1, other.data1) && Objects.equals(data2, other.data2)
-				&& Objects.equals(data3, other.data3) && Objects.equals(data4, other.data4)
-				&& Objects.equals(data5, other.data5) && Objects.equals(data6, other.data6)
-				&& Objects.equals(data7, other.data7) && Objects.equals(data8, other.data8)
-				&& Arrays.equals(extraData, other.extraData) && Arrays.equals(extraInts, other.extraInts)
-				&& Objects.equals(folderName, other.folderName) && int1 == other.int1 && int2 == other.int2
-				&& Objects.equals(name, other.name) && Objects.equals(newData, other.newData);
+		return this.name.equals(other.getName());
 	}
 }
