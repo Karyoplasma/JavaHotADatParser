@@ -1,8 +1,8 @@
 package core;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -151,8 +151,8 @@ public class HDATParser {
 	 *         on any Exception encountered
 	 */
 	public boolean writeHDAT(List<HDATEntry> entries) {
-		try (RandomAccessFile raf = new RandomAccessFile(this.hdatPath.getParent().resolve("output.dat").toString(),
-				"rw"); FileChannel channel = raf.getChannel()) {
+		try (FileOutputStream stream = new FileOutputStream(this.hdatPath.getParent().resolve("output.dat").toFile());
+				FileChannel channel = stream.getChannel()) {
 			byte[] header = "HDAT".getBytes(this.charset);
 			ByteBuffer headerBuffer = ByteBuffer.wrap(header);
 			channel.write(headerBuffer);
@@ -191,7 +191,6 @@ public class HDATParser {
 					this.boolBuffer.flip();
 					channel.write(boolBuffer);
 				}
-
 				writeExtraInts(channel, entry.getExtraInts());
 			}
 

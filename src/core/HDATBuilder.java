@@ -35,6 +35,10 @@ public class HDATBuilder {
 		List<HDATEntry> entries = new ArrayList<HDATEntry>();
 		for (String file : fileList) {
 			HDATEntry temp = readEntryFromFile(path.getParent().resolve("files/" + file), charset);
+			if (temp == null) {
+				throw new IllegalStateException("The file " + path.getParent().resolve("files/" + file).toString()
+						+ " is malformed and cannot be read!");
+			}
 			entries.add(temp);
 
 		}
@@ -110,7 +114,12 @@ public class HDATBuilder {
 		List<HDATEntry> ret = new ArrayList<HDATEntry>();
 		for (HDATEntry entry : originals) {
 			if (modList.contains(entry.getName())) {
-				ret.add(readEntryFromFile(modListPath.resolve(entry.getName()), charset));
+				HDATEntry temp = readEntryFromFile(modListPath.resolve(entry.getName()), charset);
+				if (temp == null) {
+					throw new IllegalStateException(
+							"The file " + modListPath.resolve(entry.getName()) + " is malformed and cannot be read!");
+				}
+				ret.add(temp);
 			} else {
 				ret.add(entry);
 			}
