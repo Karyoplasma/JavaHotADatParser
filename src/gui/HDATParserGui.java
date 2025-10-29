@@ -1,13 +1,14 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
 import core.HDATEntry;
 import core.HDATParser;
 import model.HDATEntryListModel;
@@ -85,7 +86,7 @@ public class HDATParserGui {
 		frmHotadatParserGui.getContentPane()
 				.setLayout(new MigLayout("", "[175px][500px,grow,fill][]", "[][900px,grow][]"));
 
-		initSearchField();
+		this.initSearchField();
 		frmHotadatParserGui.getContentPane().add(searchField, "cell 0 0,grow");
 
 		lblPath = new JLabel("");
@@ -103,31 +104,12 @@ public class HDATParserGui {
 		JScrollPane panelList = new JScrollPane();
 		this.initList();
 		panelList.setBorder(BorderFactory.createTitledBorder("File List"));
-		listEntryList.setBackground(BACKGROUND);
 		panelList.setViewportView(listEntryList);
 		frmHotadatParserGui.getContentPane().add(panelList, "cell 0 1,grow");
 
 		JScrollPane panelEditor = new JScrollPane();
-		textAreaEditor = new JTextArea();
-		textAreaEditor.setEnabled(false);
-		textAreaEditor.setBackground(BACKGROUND);
-		textAreaEditor.setFont(new Font("Monospaced", Font.PLAIN, 14));
-		textAreaEditor.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				changed = true;
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				changed = true;
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				changed = true;
-			}
-		});
+		this.initEditor();
+		
 		panelEditor.setBorder(BorderFactory.createTitledBorder("Editor"));
 		panelEditor.setViewportView(textAreaEditor);
 		frmHotadatParserGui.getContentPane().add(panelEditor, "cell 1 1 2 1,grow");
@@ -153,8 +135,50 @@ public class HDATParserGui {
 		panelCharset.setBorder(BorderFactory.createTitledBorder("Charset"));
 		frmHotadatParserGui.getContentPane().add(panelCharset, "cell 1 2 2 1, grow 0");
 
-		chooser.setFileFilter(new FileNameExtensionFilter("HotA.dat", "dat"));
+		this.setupChooser();
+	}
+
+	private void setupChooser() {
 		chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+		chooser.setPreferredSize(new Dimension(750, 550));
+		chooser.setFileFilter(new FileFilter() {
+			@Override
+			public boolean accept(File f) {
+				if (f.isDirectory()) {
+					return true;
+				}
+				return f.getName().equalsIgnoreCase("hota.dat");
+			}
+
+			@Override
+			public String getDescription() {
+				return "HotA.dat";
+			}
+		});
+		
+	}
+
+	private void initEditor() {
+		textAreaEditor = new JTextArea();
+		textAreaEditor.setEnabled(false);
+		textAreaEditor.setBackground(BACKGROUND);
+		textAreaEditor.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		textAreaEditor.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changed = true;
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changed = true;
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				changed = true;
+			}
+		});		
 	}
 
 	private void initSearchField() {
@@ -172,18 +196,15 @@ public class HDATParserGui {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				filter();
-
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				filter();
-
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-
 			}
 
 		});
@@ -243,11 +264,12 @@ public class HDATParserGui {
 	}
 
 	private Charset getCharset() {
-		return (this.rdbtnCharset1250.isSelected()) ? WINDOWS1250 : WINDOWS1251;
+		return this.rdbtnCharset1250.isSelected() ? WINDOWS1250 : WINDOWS1251;
 	}
 
 	private void initList() {
 		listEntryList = new JList<HDATEntry>();
+		listEntryList.setBackground(BACKGROUND);
 		listEntryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listEntryList.setFont(PLAIN);
 		listEntryList.addListSelectionListener(e -> {
