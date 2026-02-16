@@ -51,6 +51,8 @@ public class HDATParserGui {
 	private HDATParser parser;
 	private JTextField searchField;
 	private boolean changed = false;
+	private JTextField contentSearchField;
+	private JButton btnSearchContent;
 
 	/**
 	 * Launch the application.
@@ -84,7 +86,7 @@ public class HDATParserGui {
 		frmHotadatParserGui.setBounds(10, 10, 800, 1000);
 		frmHotadatParserGui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmHotadatParserGui.getContentPane()
-				.setLayout(new MigLayout("", "[175px][500px,grow,fill][]", "[][900px,grow][]"));
+				.setLayout(new MigLayout("", "[175px][500px,grow,fill][]", "[][900px,grow][][]"));
 
 		this.initSearchField();
 		frmHotadatParserGui.getContentPane().add(searchField, "cell 0 0,grow");
@@ -99,7 +101,7 @@ public class HDATParserGui {
 		btnOpen.addActionListener(e -> {
 			this.openDatFile();
 		});
-		frmHotadatParserGui.getContentPane().add(btnOpen, "cell 2 0");
+		frmHotadatParserGui.getContentPane().add(btnOpen, "cell 2 0,growx,growy");
 
 		JScrollPane panelList = new JScrollPane();
 		this.initList();
@@ -109,7 +111,7 @@ public class HDATParserGui {
 
 		JScrollPane panelEditor = new JScrollPane();
 		this.initEditor();
-		
+
 		panelEditor.setBorder(BorderFactory.createTitledBorder("Editor"));
 		panelEditor.setViewportView(textAreaEditor);
 		frmHotadatParserGui.getContentPane().add(panelEditor, "cell 1 1 2 1,grow");
@@ -120,7 +122,11 @@ public class HDATParserGui {
 		btnWriteHotaDat.addActionListener(e -> {
 			this.writeHotaDat();
 		});
-		frmHotadatParserGui.getContentPane().add(btnWriteHotaDat, "cell 0 2,alignx center,growy");
+		frmHotadatParserGui.getContentPane().add(btnWriteHotaDat, "cell 0 2 1 2,growx,growy");
+
+		this.initContentSearch();
+		frmHotadatParserGui.getContentPane().add(contentSearchField, "cell 1 2,grow");
+		frmHotadatParserGui.getContentPane().add(btnSearchContent, "cell 2 2,grow");
 
 		JPanel panelCharset = new JPanel();
 		panelCharset.setLayout(new MigLayout("", "[][]", "[]"));
@@ -133,7 +139,7 @@ public class HDATParserGui {
 		panelCharset.add(rdbtnCharset1250, "cell 1 0,alignx center,aligny center");
 		charsetButtons.add(rdbtnCharset1250);
 		panelCharset.setBorder(BorderFactory.createTitledBorder("Charset"));
-		frmHotadatParserGui.getContentPane().add(panelCharset, "cell 1 2 2 1, grow 0");
+		frmHotadatParserGui.getContentPane().add(panelCharset, "flowx,cell 1 3 2 1,growx 0,growy");
 
 		this.setupChooser();
 	}
@@ -155,7 +161,7 @@ public class HDATParserGui {
 				return "HotA.dat";
 			}
 		});
-		
+
 	}
 
 	private void initEditor() {
@@ -178,19 +184,38 @@ public class HDATParserGui {
 			public void changedUpdate(DocumentEvent e) {
 				changed = true;
 			}
-		});		
+		});
+	}
+
+	private void initContentSearch() {
+		contentSearchField = new JTextField();
+		contentSearchField.setBackground(BACKGROUND);
+		contentSearchField.setFont(PLAIN);
+		contentSearchField.setEditable(false);
+		contentSearchField.addActionListener(e -> btnSearchContent.doClick());
+		btnSearchContent = new JButton("Search");
+		btnSearchContent.setFont(BOLD);
+		btnSearchContent.setEnabled(false);
+		btnSearchContent.addActionListener(e -> this.searchContents());
+	}
+
+	private void searchContents() {
+		listEntryList.clearSelection();
+		String query = contentSearchField.getText().trim().toLowerCase();
+		listModel.filter(e -> e.getContentSearchContext().contains(query));
 	}
 
 	private void initSearchField() {
 		searchField = new JTextField();
+		searchField.setBackground(BACKGROUND);
 		searchField.setFont(PLAIN);
 		searchField.setEditable(false);
-		searchField.setColumns(10);
 		searchField.getDocument().addDocumentListener(new DocumentListener() {
 
 			private void filter() {
 				listEntryList.clearSelection();
-				listModel.filter(searchField.getText());
+				String query = searchField.getText().trim().toLowerCase();
+				listModel.filter(e -> e.getName().toLowerCase().contains(query));
 			}
 
 			@Override
@@ -253,6 +278,8 @@ public class HDATParserGui {
 			this.textAreaEditor.setEnabled(true);
 			this.btnWriteHotaDat.setEnabled(true);
 			this.searchField.setEditable(true);
+			this.btnSearchContent.setEnabled(true);
+			this.contentSearchField.setEditable(true);
 			this.initializeListModel();
 		}
 	}
