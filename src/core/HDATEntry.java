@@ -16,6 +16,30 @@ public class HDATEntry {
 
 	}
 
+	public HDATEntry deepCopy() {
+		HDATEntry copy = new HDATEntry();
+		copy.name = this.name;
+		copy.folderName = this.folderName;
+		copy.data1 = this.data1;
+		copy.data2 = this.data2;
+		copy.data3 = this.data3;
+		copy.data4 = this.data4;
+		copy.data5 = this.data5;
+		copy.data6 = this.data6;
+		copy.data7 = this.data7;
+		copy.data8 = this.data8;
+		copy.newData = this.newData;
+		copy.int1 = this.int1;
+		copy.int2 = this.int2;
+		if (this.extraData != null) {
+			copy.extraData = this.extraData.clone();
+		}
+		if (this.extraInts != null) {
+			copy.extraInts = this.extraInts.clone();
+		}
+		return copy;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -288,6 +312,35 @@ public class HDATEntry {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+
+	public String getContentSearchContext() {
+		StringBuilder builder = new StringBuilder();
+		if (!this.data1.isEmpty()) {
+			builder.append(this.data1).append(" ");
+		}
+		if (!this.data2.isEmpty()) {
+			builder.append(this.data2).append(" ");
+		}
+		if (!this.data3.isEmpty()) {
+			builder.append(this.data3).append(" ");
+		}
+		if (!this.data4.isEmpty()) {
+			builder.append(this.data4).append(" ");
+		}
+		if (!this.data5.isEmpty()) {
+			builder.append(this.data5).append(" ");
+		}
+		if (!this.data6.isEmpty()) {
+			builder.append(this.data6).append(" ");
+		}
+		if (!this.data7.isEmpty()) {
+			builder.append(this.data7).append(" ");
+		}
+		if (!this.data8.isEmpty()) {
+			builder.append(this.data8).append(" ");
+		}
+		return builder.toString().toLowerCase();
 	}
 
 	public String toExportString() {

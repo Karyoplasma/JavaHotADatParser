@@ -9,7 +9,7 @@ import java.util.zip.CRC32;
  * Just a debug class. ChatGPT wrote this, no guarantees
  */
 public class FileCompare {
-	
+
 	public static long computeCRC(String filename) throws IOException {
 		CRC32 crc = new CRC32();
 		try (FileInputStream fis = new FileInputStream(filename)) {
@@ -21,7 +21,7 @@ public class FileCompare {
 		}
 		return crc.getValue();
 	}
-	
+
 	public static void printFirstDifference(java.io.File f1, java.io.File f2) throws IOException {
 		try (FileInputStream in1 = new FileInputStream(f1); FileInputStream in2 = new FileInputStream(f2)) {
 

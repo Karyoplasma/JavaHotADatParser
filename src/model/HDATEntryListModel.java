@@ -2,6 +2,8 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+
 import core.HDATEntry;
 import javax.swing.AbstractListModel;
 
@@ -26,10 +28,10 @@ public class HDATEntryListModel extends AbstractListModel<HDATEntry> {
 		return this.view.get(index);
 	}
 
-	public void filter(String search) {
+	public void filter(Predicate<HDATEntry> query) {
 		view.clear();
 		for (HDATEntry entry : entries) {
-			if (entry.getName().toLowerCase().contains(search.toLowerCase())) {
+			if (query.test(entry)) {
 				view.add(entry);
 			}
 		}
